@@ -1,0 +1,22 @@
+# Python virtual environments and bytecode
+.venv/
+venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Local secrets and environment configuration
+.env
+.env.*
+!.env.example
+
+# Local inspection reports and uploaded evidence
+data/patologias_reg.json
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

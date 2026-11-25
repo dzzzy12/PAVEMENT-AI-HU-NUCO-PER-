@@ -1,0 +1,81 @@
+tramo_id,via,fecha,antiguedad_anios,nivel_transito,patologia_principal,severidad,pci_observado,lat,lng,origen_datos
+HCO-001,Jr. 28 de Julio,2024-01-15,13,Medio,Grietas transversales,Media,54.2,-9.931129,-76.238676,Simulado
+HCO-002,Av. Universitaria,2024-01-24,11,Bajo,Escalonamiento,Media,49.6,-9.948411,-76.236041,Simulado
+HCO-003,Malecón Daniel Alomía Robles,2024-02-02,5,Alto,Losa dividida,Media,55.0,-9.92743,-76.24029,Simulado
+HCO-004,Carretera Central,2024-02-11,3,Bajo,Grietas transversales,Media,86.5,-9.921956,-76.272897,Simulado
+HCO-005,Av. Alameda de la República,2024-02-20,7,Medio,Grietas de esquina,Baja,75.0,-9.926414,-76.2441,Simulado
+HCO-006,Av. Esteban Pavletich,2024-02-29,15,Alto,Grietas transversales,Alta,37.2,-9.943491,-76.242225,Simulado
+HCO-007,Jr. Dos de Mayo,2024-03-09,12,Medio,Losa dividida,Alta,32.6,-9.928246,-76.239489,Simulado
+HCO-008,Av. Circunvalación,2024-03-18,2,Medio,Grietas transversales,Baja,95.4,-9.943488,-76.258489,Simulado
+HCO-009,Amarilis · Av. Perú,2024-03-27,3,Medio,Despostillamiento,Media,98.0,-9.936533,-76.23024,Simulado
+HCO-010,Pillco Marca · Av. Juan Velasco,2024-04-05,1,Medio,Despostillamiento,Media,82.5,-9.966118,-76.249845,Simulado
+HCO-011,Jr. 28 de Julio,2024-04-14,12,Medio,Grietas transversales,Baja,47.9,-9.927066,-76.24453,Simulado
+HCO-012,Av. Universitaria,2024-04-23,4,Medio,Grietas de esquina,Baja,84.7,-9.951934,-76.237206,Simulado
+HCO-013,Malecón Daniel Alomía Robles,2024-05-02,8,Alto,Escalonamiento,Media,47.3,-9.924239,-76.242811,Simulado
+HCO-014,Carretera Central,2024-05-11,1,Medio,Grietas transversales,Media,80.1,-9.925606,-76.272897,Simulado
+HCO-015,Av. Alameda de la República,2024-05-20,13,Medio,Losa dividida,Media,33.0,-9.923501,-76.239153,Simulado
+HCO-016,Av. Esteban Pavletich,2024-05-29,3,Alto,Grietas transversales,Media,71.6,-9.941479,-76.245432,Simulado
+HCO-017,Jr. Dos de Mayo,2024-06-07,12,Bajo,Escalonamiento,Media,38.8,-9.931838,-76.237076,Simulado
+HCO-018,Av. Circunvalación,2024-06-16,3,Alto,Grietas de esquina,Baja,66.6,-9.941715,-76.254973,Simulado
+HCO-019,Amarilis · Av. Perú,2024-06-25,15,Medio,Grietas transversales,Baja,43.1,-9.938879,-76.23176,Simulado
+HCO-020,Pillco Marca · Av. Juan Velasco,2024-07-04,6,Bajo,Grietas longitudinales,Media,56.9,-9.967897,-76.248723,Simulado
+HCO-021,Jr. 28 de Julio,2024-07-13,15,Medio,Escalonamiento,Baja,43.1,-9.932646,-76.239695,Simulado
+HCO-022,Av. Universitaria,2024-07-22,5,Medio,Despostillamiento,Media,76.5,-9.950127,-76.23744,Simulado
+HCO-023,Malecón Daniel Alomía Robles,2024-07-31,8,Bajo,Escalonamiento,Media,53.8,-9.92491,-76.24025,Simulado
+HCO-024,Carretera Central,2024-08-09,11,Medio,Despostillamiento,Media,63.9,-9.92394,-76.265292,Simulado
+HCO-025,Av. Alameda de la República,2024-08-18,4,Bajo,Grietas transversales,Baja,72.7,-9.92749,-76.239184,Simulado
+HCO-026,Av. Esteban Pavletich,2024-08-27,6,Medio,Grietas transversales,Baja,75.8,-9.944883,-76.243482,Simulado
+HCO-027,Jr. Dos de Mayo,2024-09-05,4,Bajo,Grietas de esquina,Media,69.6,-9.929896,-76.240075,Simulado
+HCO-028,Av. Circunvalación,2024-09-14,8,Medio,Despostillamiento,Baja,68.4,-9.947005,-76.259036,Simulado
+HCO-029,Amarilis · Av. Perú,2024-09-23,11,Bajo,Grietas de esquina,Baja,49.7,-9.93357,-76.22651,Simulado
+HCO-030,Pillco Marca · Av. Juan Velasco,2024-10-02,9,Alto,Grietas longitudinales,Baja,61.8,-9.969303,-76.248257,Simulado
+HCO-031,Jr. 28 de Julio,2024-10-11,3,Alto,Despostillamiento,Alta,63.0,-9.929379,-76.239086,Simulado
+HCO-032,Av. Universitaria,2024-10-20,11,Medio,Grietas longitudinales,Baja,51.1,-9.951083,-76.239705,Simulado
+HCO-033,Malecón Daniel Alomía Robles,2024-10-29,12,Medio,Losa dividida,Media,43.8,-9.929161,-76.24069,Simulado
+HCO-034,Carretera Central,2024-11-07,15,Alto,Grietas de esquina,Media,27.2,-9.921436,-76.266828,Simulado
+HCO-035,Av. Alameda de la República,2024-11-16,10,Bajo,Despostillamiento,Baja,63.1,-9.923572,-76.244855,Simulado
+HCO-036,Av. Esteban Pavletich,2024-11-25,5,Bajo,Losa dividida,Media,68.5,-9.943968,-76.242447,Simulado
+HCO-037,Jr. Dos de Mayo,2024-12-04,7,Bajo,Losa dividida,Media,66.0,-9.928621,-76.23774,Simulado
+HCO-038,Av. Circunvalación,2024-12-13,14,Medio,Grietas de esquina,Media,38.5,-9.947102,-76.258375,Simulado
+HCO-039,Amarilis · Av. Perú,2024-12-22,13,Medio,Escalonamiento,Media,29.7,-9.93781,-76.228569,Simulado
+HCO-040,Pillco Marca · Av. Juan Velasco,2024-12-31,11,Medio,Grietas de esquina,Media,43.0,-9.964841,-76.250121,Simulado
+HCO-041,Jr. 28 de Julio,2025-01-09,9,Bajo,Grietas longitudinales,Media,73.6,-9.932647,-76.243121,Simulado
+HCO-042,Av. Universitaria,2025-01-18,8,Bajo,Escalonamiento,Baja,68.5,-9.950619,-76.237481,Simulado
+HCO-043,Malecón Daniel Alomía Robles,2025-01-27,1,Alto,Grietas de esquina,Alta,63.8,-9.923984,-76.238954,Simulado
+HCO-044,Carretera Central,2025-02-05,4,Alto,Grietas de esquina,Media,73.2,-9.922904,-76.272868,Simulado
+HCO-045,Av. Alameda de la República,2025-02-14,14,Medio,Escalonamiento,Baja,46.9,-9.922804,-76.240602,Simulado
+HCO-046,Av. Esteban Pavletich,2025-02-23,2,Medio,Grietas de esquina,Baja,69.9,-9.943582,-76.24651,Simulado
+HCO-047,Jr. Dos de Mayo,2025-03-04,7,Bajo,Despostillamiento,Baja,61.7,-9.927017,-76.234963,Simulado
+HCO-048,Av. Circunvalación,2025-03-13,13,Alto,Despostillamiento,Media,40.7,-9.94453,-76.257174,Simulado
+HCO-049,Amarilis · Av. Perú,2025-03-22,5,Medio,Escalonamiento,Media,75.2,-9.938982,-76.232985,Simulado
+HCO-050,Pillco Marca · Av. Juan Velasco,2025-03-31,4,Medio,Losa dividida,Media,74.5,-9.971141,-76.249733,Simulado
+HCO-051,Jr. 28 de Julio,2025-04-09,8,Medio,Grietas transversales,Media,63.2,-9.930462,-76.244596,Simulado
+HCO-052,Av. Universitaria,2025-04-18,6,Alto,Grietas transversales,Media,64.8,-9.949113,-76.241855,Simulado
+HCO-053,Malecón Daniel Alomía Robles,2025-04-27,1,Medio,Grietas de esquina,Baja,78.4,-9.924914,-76.236386,Simulado
+HCO-054,Carretera Central,2025-05-06,5,Medio,Grietas de esquina,Media,55.8,-9.924183,-76.269208,Simulado
+HCO-055,Av. Alameda de la República,2025-05-15,3,Alto,Escalonamiento,Baja,72.4,-9.926648,-76.241041,Simulado
+HCO-056,Av. Esteban Pavletich,2025-05-24,8,Medio,Despostillamiento,Alta,50.0,-9.939552,-76.242306,Simulado
+HCO-057,Jr. Dos de Mayo,2025-06-02,6,Alto,Escalonamiento,Baja,61.3,-9.927957,-76.23777,Simulado
+HCO-058,Av. Circunvalación,2025-06-11,12,Bajo,Losa dividida,Baja,52.0,-9.946243,-76.254174,Simulado
+HCO-059,Amarilis · Av. Perú,2025-06-20,3,Medio,Grietas longitudinales,Baja,78.9,-9.937825,-76.230258,Simulado
+HCO-060,Pillco Marca · Av. Juan Velasco,2025-06-29,6,Medio,Grietas transversales,Media,70.9,-9.966227,-76.24774,Simulado
+HCO-061,Jr. 28 de Julio,2025-07-08,6,Medio,Escalonamiento,Alta,66.0,-9.927039,-76.243302,Simulado
+HCO-062,Av. Universitaria,2025-07-17,14,Bajo,Grietas de esquina,Alta,50.1,-9.948441,-76.242243,Simulado
+HCO-063,Malecón Daniel Alomía Robles,2025-07-26,4,Medio,Escalonamiento,Baja,70.5,-9.930107,-76.238796,Simulado
+HCO-064,Carretera Central,2025-08-04,15,Bajo,Grietas de esquina,Media,42.3,-9.924609,-76.265558,Simulado
+HCO-065,Av. Alameda de la República,2025-08-13,9,Bajo,Losa dividida,Media,67.8,-9.925367,-76.243461,Simulado
+HCO-066,Av. Esteban Pavletich,2025-08-22,1,Medio,Losa dividida,Baja,87.9,-9.941744,-76.244958,Simulado
+HCO-067,Jr. Dos de Mayo,2025-08-31,14,Bajo,Grietas transversales,Media,47.1,-9.93235,-76.236699,Simulado
+HCO-068,Av. Circunvalación,2025-09-09,4,Medio,Grietas transversales,Baja,63.4,-9.945829,-76.253044,Simulado
+HCO-069,Amarilis · Av. Perú,2025-09-18,2,Medio,Escalonamiento,Media,74.0,-9.934829,-76.229497,Simulado
+HCO-070,Pillco Marca · Av. Juan Velasco,2025-09-27,15,Medio,Grietas longitudinales,Baja,47.2,-9.967275,-76.247579,Simulado
+HCO-071,Jr. 28 de Julio,2025-10-06,14,Bajo,Grietas transversales,Baja,42.4,-9.927438,-76.237955,Simulado
+HCO-072,Av. Universitaria,2025-10-15,11,Bajo,Losa dividida,Baja,48.8,-9.9538,-76.242235,Simulado
+HCO-073,Malecón Daniel Alomía Robles,2025-10-24,14,Medio,Despostillamiento,Media,44.4,-9.92582,-76.239221,Simulado
+HCO-074,Carretera Central,2025-11-02,10,Medio,Despostillamiento,Baja,49.0,-9.921368,-76.271244,Simulado
+HCO-075,Av. Alameda de la República,2025-11-11,15,Medio,Losa dividida,Alta,30.9,-9.927872,-76.241208,Simulado
+HCO-076,Av. Esteban Pavletich,2025-11-20,5,Bajo,Grietas transversales,Alta,58.4,-9.944276,-76.249038,Simulado
+HCO-077,Jr. Dos de Mayo,2025-11-29,11,Medio,Escalonamiento,Alta,40.7,-9.931222,-76.240932,Simulado
+HCO-078,Av. Circunvalación,2025-12-08,6,Medio,Grietas de esquina,Baja,69.7,-9.944615,-76.254632,Simulado
+HCO-079,Amarilis · Av. Perú,2025-12-17,12,Alto,Grietas transversales,Baja,35.6,-9.934403,-76.226921,Simulado
+HCO-080,Pillco Marca · Av. Juan Velasco,2025-12-26,14,Alto,Grietas transversales,Baja,42.9,-9.970063,-76.250127,Simulado

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090d16">
+  <title>PAVEMENT AI · Huánuco</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="PAVEMENT AI inicio">
+        <span class="brand-mark"><i data-lucide="layers-3"></i></span>
+        <span class="brand-copy"><strong>PAVEMENT <em>AI</em></strong><small>HUÁNUCO · PERÚ</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <button class="nav-tab active" data-tab="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard vial</button>
+        <button class="nav-tab" data-tab="pathologies"><i data-lucide="scan-line"></i> Patologías</button>
+        <button class="nav-tab" data-tab="evaluation"><i data-lucide="chart-no-axes-combined"></i> Evaluación</button>
+        <button class="nav-tab" data-tab="dataset"><i data-lucide="database"></i> Dataset</button>
+      </nav>
+      <div class="top-status"><span class="pulse"></span><span>SISTEMA ACTIVO</span><span class="status-divider"></span><i data-lucide="map-pin"></i> HUÁNUCO</div>
+    </header>
+
+    <main>
+      <section class="view active" id="view-dashboard">
+        <div class="page-heading">
+          <div><div class="eyebrow"><span class="eyebrow-line"></span> CENTRO DE MONITOREO VIAL <span class="eyebrow-dot">/</span> HUÁNUCO</div>
+            <h1>Inteligencia para una <span>mejor infraestructura.</span></h1>
+            <p>Monitoreo de pavimento rígido y proyección de condición PCI.</p>
+          </div>
+          <div class="heading-meta"><span class="live-pill"><span class="pulse"></span> EN VIVO</span><span id="current-date" class="mono"></span></div>
+        </div>
+        <div id="simulated-banner" class="data-banner"><i data-lucide="info"></i><span id="simulated-banner-text">Los datos se identificarán por su origen. Los registros simulados no son mediciones verificadas en campo.</span></div>
+        <div class="kpi-grid">
+          <article class="kpi-card"><div class="kpi-top"><span>TRAMOS INSPECCIONADOS</span><span class="kpi-icon cyan"><i data-lucide="route"></i></span></div><div class="kpi-value" id="kpi-segments"><span class="counter">0</span></div><div class="kpi-foot"><span class="status-dot cyan-bg"></span> Tramos viales monitoreados</div></article>
+          <article class="kpi-card"><div class="kpi-top"><span>PCI PROMEDIO ACTUAL</span><span class="kpi-icon green"><i data-lucide="activity"></i></span></div><div class="kpi-value" id="kpi-pci"><span class="counter">0.0</span><small>/100</small></div><div class="kpi-foot"><span id="pci-state" class="condition-chip">—</span><span> condición general</span></div></article>
+          <article class="kpi-card"><div class="kpi-top"><span>ANTIGÜEDAD MEDIA</span><span class="kpi-icon amber"><i data-lucide="calendar-clock"></i></span></div><div class="kpi-value" id="kpi-age"><span class="counter">0.0</span><small>años</small></div><div class="kpi-foot">Edad estimada de la superficie</div></article>
+          <article class="kpi-card"><div class="kpi-top"><span>R² DEL MODELO</span><span class="kpi-icon violet"><i data-lucide="scan-search"></i></span></div><div class="kpi-value" id="kpi-r2"><span class="counter">0.00</span></div><div class="kpi-foot">Ajuste en conjunto de prueba · 20%</div></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel map-panel">
+            <div class="panel-heading"><div><div class="section-kicker">GEOESPACIAL <span>·</span> 01</div><h2>Red vial monitoreada</h2><p>Condición PCI por tramo · Huánuco, Perú</p></div><button class="icon-button" id="locate-map" title="Centrar mapa"><i data-lucide="crosshair"></i></button></div>
+            <div class="map-wrap"><div id="map" aria-label="Mapa interactivo de tramos viales en Huánuco"></div><div class="map-legend"><span><i class="legend-dot good"></i> Bueno</span><span><i class="legend-dot fair"></i> Regular</span><span><i class="legend-dot poor"></i> Crítico</span></div><div class="map-attribution">HUÁNUCO · 9°55′ S, 76°14′ O</div></div>
+            <div class="map-footer"><span><i data-lucide="mouse-pointer-2"></i> Selecciona un marcador para ver el tramo</span><span class="mono" id="map-count">80 PUNTOS</span></div>
+          </article>
+          <article class="panel simulator-panel">
+            <div class="panel-heading"><div><div class="section-kicker">MODELO PREDICTIVO <span>·</span> 02</div><h2>Simulador de condición</h2><p>Proyecta el desempeño futuro del pavimento</p></div><span class="model-badge"><span></span> LINEAR REGRESSION</span></div>
+            <div class="road-telemetry" aria-hidden="true"><span class="telemetry-label">PERFIL LONGITUDINAL · SCAN 01</span><div class="road-track"><span class="road-centerline"></span><span class="scan-beam"></span></div><span class="telemetry-value">LIVE</span></div>
+            <form id="prediction-form" class="predict-form">
+              <label>ANTIGÜEDAD ACTUAL <span class="field-unit">AÑOS</span><input id="age-input" type="number" min="0" max="100" step="0.5" value="8" required><span class="field-help">Antigüedad estimada del pavimento</span></label>
+              <label>HORIZONTE DE PROYECCIÓN <span class="field-unit">AÑOS</span><div class="range-control"><input id="horizon-input" type="range" min="0" max="20" step="1" value="5"><span id="horizon-value" class="mono">5 años</span></div><span class="field-help">¿Cuánto tiempo hacia el futuro?</span></label>
+              <div class="predict-actions"><button type="submit" class="primary-button"><i data-lucide="zap"></i> CALCULAR PROYECCIÓN <i data-lucide="arrow-up-right" class="button-arrow"></i></button><button type="button" class="secondary-button" id="export-prediction"><i data-lucide="download"></i> EXPORTAR CSV</button></div>
+            </form>
+            <div id="extrapolation-alert" class="alert-box" hidden><i data-lucide="triangle-alert"></i><span><strong>Proyección fuera del rango histórico.</strong> Aumenta la incertidumbre: el modelo no se entrenó en esta antigüedad.</span></div>
+            <div class="prediction-results">
+              <div class="prediction-card"><div class="prediction-label"><span>PCI ACTUAL ESTIMADO</span><i data-lucide="circle-dot"></i></div><div class="prediction-score" id="prediction-current">—</div><div id="prediction-current-state" class="condition-chip">—</div></div>
+              <div class="prediction-card future"><div class="prediction-label"><span>PCI PROYECTADO</span><i data-lucide="trending-down"></i></div><div class="prediction-score" id="prediction-future">—</div><div id="prediction-future-state" class="condition-chip">—</div></div>
+            </div>
+            <div class="equation-strip"><span>ECUACIÓN DEL MODELO</span><code id="equation">PCI = —</code><span class="model-note">Entrada: antigüedad · Salida: PCI</span></div>
+            <div class="chart-container"><div class="chart-heading"><span>ANTIGÜEDAD VS. CONDICIÓN PCI</span><span class="chart-legend"><i></i> Observado <i class="line-key"></i> Regresión <i class="projection-key"></i> Proyección</span></div><div class="chart-area"><canvas id="prediction-chart" aria-label="Gráfico de dispersión y recta de regresión"></canvas></div></div>
+          </article>
+        </div>
+        <div class="footnote"><i data-lucide="shield-check"></i> Herramienta de apoyo técnico. Las predicciones no sustituyen una inspección de campo conforme a ASTM D6433.</div>
+      </section>
+
+      <section class="view" id="view-pathologies">
+        <div class="page-heading compact-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> INSPECCIÓN DE CAMPO <span class="eyebrow-dot">/</span> REGISTRO</div><h1>Registro de <span>patologías.</span></h1><p>Documenta hallazgos de pavimento rígido con evidencia fotográfica.</p></div></div>
+        <div class="pathology-layout">
+          <article class="panel form-panel"><div class="panel-heading"><div><div class="section-kicker">NUEVO HALLAZGO <span>·</span> 01</div><h2>Detalle de inspección</h2><p>Completa la información del tramo observado</p></div><span class="form-step">01 <i>/</i> 01</span></div>
+            <form id="pathology-form" enctype="multipart/form-data">
+              <label class="form-label">IDENTIFICADOR DEL TRAMO<input name="tramo_id" list="segment-options" placeholder="Ej. HCO-012" required maxlength="40"><datalist id="segment-options"></datalist></label>
+              <span class="form-label">TIPO DE PATOLOGÍA</span>
+              <div class="pathology-options">
+                <label class="pathology-option"><input type="radio" name="patologia" value="Grietas longitudinales" required><span class="pathology-icon"><i data-lucide="move-horizontal"></i></span><span>Grietas<br>longitudinales</span></label>
+                <label class="pathology-option"><input type="radio" name="patologia" value="Grietas transversales"><span class="pathology-icon"><i data-lucide="move-vertical"></i></span><span>Grietas<br>transversales</span></label>
+                <label class="pathology-option"><input type="radio" name="patologia" value="Grietas de esquina"><span class="pathology-icon"><i data-lucide="scan"></i></span><span>Grietas de<br>esquina</span></label>
+                <label class="pathology-option"><input type="radio" name="patologia" value="Losa dividida"><span class="pathology-icon"><i data-lucide="grid-2x2"></i></span><span>Losa<br>dividida</span></label>
+                <label class="pathology-option"><input type="radio" name="patologia" value="Despostillamiento"><span class="pathology-icon"><i data-lucide="scan-line"></i></span><span>Despostilla-<br>miento</span></label>
+                <label class="pathology-option"><input type="radio" name="patologia" value="Escalonamiento"><span class="pathology-icon"><i data-lucide="between-horizontal-end"></i></span><span>Escalona-<br>miento</span></label>
+              </div>
+              <label class="form-label">NIVEL DE SEVERIDAD<select name="severidad" required><option value="" disabled selected>Selecciona severidad</option><option>Baja</option><option>Media</option><option>Alta</option></select></label>
+              <label class="form-label">DESCRIPCIÓN <span class="optional">OPCIONAL</span><textarea name="descripcion" rows="3" maxlength="1000" placeholder="Describe brevemente el hallazgo, ubicación o dimensión..."></textarea></label>
+              <label class="form-label">FOTOGRAFÍA DE EVIDENCIA <span class="optional">JPG · PNG · WEBP · MÁX. 8 MB</span><span class="upload-zone"><i data-lucide="image-plus"></i><strong id="upload-label">Arrastra una imagen o <u>explora archivos</u></strong><small>La foto se guardará como evidencia de campo</small><input type="file" name="foto" accept="image/jpeg,image/png,image/webp" required></span></label>
+              <button type="submit" class="primary-button full-button"><i data-lucide="clipboard-check"></i> GUARDAR INSPECCIÓN <i data-lucide="arrow-up-right" class="button-arrow"></i></button>
+              <p id="pathology-message" class="form-message" role="status"></p>
+            </form>
+          </article>
+          <div class="gallery-column"><div class="gallery-header"><div><div class="section-kicker">HALLAZGOS DOCUMENTADOS <span>·</span> 02</div><h2>Galería de patologías</h2></div><div class="gallery-actions"><span id="report-count" class="count-badge">0 REPORTES</span><a class="secondary-button export-small" href="/api/exportar-patologias-csv"><i data-lucide="download"></i> CSV</a></div></div><div id="pathology-gallery" class="pathology-gallery"><div class="empty-state"><i data-lucide="images"></i><strong>Aún no hay reportes</strong><span>Los hallazgos que registres aparecerán aquí.</span></div></div></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-evaluation">
+        <div class="page-heading compact-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> VALIDACIÓN DEL MODELO <span class="eyebrow-dot">/</span> ANÁLISIS</div><h1>Evaluación y <span>escenarios.</span></h1><p>Rendimiento estadístico, casos ilustrativos y consideraciones técnicas.</p></div></div>
+        <div class="metric-grid">
+          <article class="panel metric-card"><div class="metric-symbol cyan"><i data-lucide="scan-search"></i></div><div class="section-kicker">COEFICIENTE DE DETERMINACIÓN</div><div class="metric-value" id="metric-r2">—</div><p>Proporción de variabilidad del PCI explicada por antigüedad en la muestra de prueba.</p><div class="metric-caption">MÁS CERCA DE 1.0 = MAYOR AJUSTE</div></article>
+          <article class="panel metric-card"><div class="metric-symbol amber"><i data-lucide="move-horizontal"></i></div><div class="section-kicker">ERROR ABSOLUTO MEDIO</div><div class="metric-value"><span id="metric-mae">—</span><small> PCI</small></div><p>El MAE indica cuántos puntos PCI se desvía en promedio la predicción de los valores observados en prueba.</p><div class="metric-caption">MENOR VALOR = MENOR ERROR MEDIO</div></article>
+          <article class="panel metric-card"><div class="metric-symbol coral"><i data-lucide="scan-line"></i></div><div class="section-kicker">RAÍZ DEL ERROR CUADRÁTICO</div><div class="metric-value"><span id="metric-rmse">—</span><small> PCI</small></div><p>Penaliza errores grandes y resume la dispersión de los residuos del modelo.</p><div class="metric-caption">EVALUADO EN EL CONJUNTO DE PRUEBA</div></article>
+        </div>
+        <div class="panel scenario-panel"><div class="panel-heading"><div><div class="section-kicker">PROYECCIONES ILUSTRATIVAS <span>·</span> 03</div><h2>Tres escenarios viales</h2><p>Estimaciones del modelo para ejemplos ilustrativos; no son evaluaciones medidas de tramos reales.</p></div><span class="simulation-tag"><i data-lucide="flask-conical"></i> ESCENARIOS SIMULADOS</span></div><div id="scenario-grid" class="scenario-grid"></div></div>
+        <div class="panel limitations"><div class="limit-icon"><i data-lucide="triangle-alert"></i></div><div><div class="section-kicker">LECTURA TÉCNICA</div><h2>Alcances y limitaciones</h2><p>La pendiente <strong id="slope-explanation">—</strong>. Es una tendencia promedio ajustada, no una causa ni una tasa garantizada para cada vía. El MAE resume el error absoluto medio en puntos PCI en el conjunto de prueba. La antigüedad por sí sola no determina el PCI: también influyen tránsito, clima, drenaje, materiales, construcción y mantenimiento, ausentes de este modelo simple. Fuera del rango histórico, la extrapolación incrementa la incertidumbre. Esta predicción no sustituye una inspección ni una evaluación técnica PCI.</p><div class="limit-points"><span><i data-lucide="check"></i> División reproducible entrenamiento/prueba (80/20)</span><span><i data-lucide="check"></i> Métricas R², MAE y RMSE sobre datos de prueba</span><span><i data-lucide="alert-circle"></i> Extrapolar fuera del rango observado aumenta la incertidumbre</span></div></div></div>
+      </section>
+
+      <section class="view" id="view-dataset">
+        <div class="page-heading compact-heading dataset-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> DATOS DE INSPECCIÓN <span class="eyebrow-dot">/</span> HISTORIAL</div><h1>Dataset de <span>tramos.</span></h1><p>Observaciones PCI utilizadas para entrenar y evaluar el modelo.</p></div><div class="dataset-actions"><button class="secondary-button" id="print-report"><i data-lucide="printer"></i> REPORTE IMPRIMIBLE</button><a class="primary-button link-button" href="/api/exportar-csv"><i data-lucide="download"></i> DESCARGAR CSV</a></div></div>
+        <div class="panel dataset-panel"><div class="dataset-toolbar"><div><div class="section-kicker">REGISTROS DE INSPECCIÓN <span>·</span> <span id="dataset-total">— FILAS</span></div><h2>Historial de condición vial</h2></div><label class="search-box"><i data-lucide="search"></i><input id="dataset-search" type="search" placeholder="Buscar vía o tramo..."></label></div><div class="dataset-notice"><i data-lucide="info"></i><span>Las filas marcadas <strong>Simulado</strong> son datos sintéticos, no mediciones técnicas reales ni inspecciones verificadas en campo.</span></div><div class="dataset-notice quality-notice"><i data-lucide="list-checks"></i><span id="quality-summary">Resumen de validación del dataset.</span></div><div class="table-wrap"><table><thead><tr><th>TRAMO</th><th>VÍA</th><th>FECHA</th><th>ANTIGÜEDAD</th><th>TRÁNSITO</th><th>PATOLOGÍA PRINCIPAL</th><th>SEVERIDAD</th><th>PCI</th><th>ORIGEN</th></tr></thead><tbody id="dataset-body"></tbody></table></div><div class="table-footer"><span id="table-count">Cargando registros...</span><span>FUENTE: DATASET PCI · HUÁNUCO</span></div></div>
+      </section>
+    </main>
+    <footer class="app-footer"><span>© 2026 PAVEMENT AI <i>·</i> SISTEMA DE APOYO A LA GESTIÓN VIAL · PCI ESTIMADO</span><span>HUÁNUCO, PERÚ <i>·</i> <span class="footer-online">●</span> OPERATIVO</span></footer>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
