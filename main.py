@@ -21,6 +21,7 @@ UPLOAD_DIR = ROOT_DIR / "static" / "uploads"
 REGISTRY_PATH = ROOT_DIR / "data" / "patologias_reg.json"
 MAX_UPLOAD_BYTES = 8 * 1024 * 1024
 ALLOWED_IMAGE_TYPES = {"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp"}
+SEVERITY_PCI_ADJUSTMENT = {"Baja": 2, "Media": 6, "Alta": 12}
 IMAGE_SIGNATURES = {
     "image/jpeg": lambda content: content.startswith(b"\xff\xd8\xff"),
     "image/png": lambda content: content.startswith(b"\x89PNG\r\n\x1a\n"),
@@ -65,6 +66,26 @@ def _native(value):
     return value
 
 
+def _save_registry(records: list[dict]) -> None:
+    temporary_registry = REGISTRY_PATH.with_name(
+        f"{REGISTRY_PATH.name}.{uuid.uuid4().hex}.tmp"
+    )
+    try:
+        REGISTRY_PATH.parent.mkdir(parents=True, exist_ok=True)
+        temporary_registry.write_text(
+            json.dumps(records, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        temporary_registry.replace(REGISTRY_PATH)
+    except OSError:
+        app.logger.exception("No se pudo guardar el registro de patologías")
+        try:
+            temporary_registry.unlink(missing_ok=True)
+        except OSError:
+            app.logger.exception("No se pudo limpiar el archivo temporal de patologías")
+        abort(500, description="No se pudo guardar el registro de patologías.")
+
+
 def _registry() -> list[dict]:
     if not REGISTRY_PATH.exists():
         return []
@@ -74,7 +95,54 @@ def _registry() -> list[dict]:
         abort(500, description="No se pudo leer el registro de patologías.")
     if not isinstance(records, list):
         abort(500, description="El registro de patologías tiene un formato inválido.")
+    if any(not isinstance(record, dict) for record in records):
+        abort(500, description="El registro de patologías tiene un formato inválido.")
+
+    changed = False
+    seen_ids = set()
+    for record in records:
+        record_id = record.get("id")
+        if not isinstance(record_id, str) or not record_id.strip() or record_id in seen_ids:
+            record_id = uuid.uuid4().hex
+            while record_id in seen_ids:
+                record_id = uuid.uuid4().hex
+            record["id"] = record_id
+            changed = True
+        seen_ids.add(record_id)
+        segment_id = record.get("tramo_id")
+        severity = record.get("severidad")
+        has_estimate = (
+            isinstance(record.get("pci_estimado"), (int, float))
+            and math.isfinite(float(record["pci_estimado"]))
+            and isinstance(record.get("condicion"), str)
+        )
+        if (
+            not has_estimate
+            and isinstance(segment_id, str)
+            and segment_id in known_segment_ids
+            and isinstance(severity, str)
+            and severity in SEVERITY_PCI_ADJUSTMENT
+        ):
+            estimate = _pathology_pci_estimate(segment_id, severity)
+            record["pci_estimado"] = estimate["pci_estimado"]
+            record["condicion"] = estimate["condicion"]
+            changed = True
+    if changed:
+        _save_registry(records)
     return records
+
+
+def _image_path(record: dict) -> Path | None:
+    photo_url = record.get("foto_url")
+    prefix = "/static/uploads/"
+    if not isinstance(photo_url, str) or not photo_url.startswith(prefix):
+        return None
+    filename = photo_url[len(prefix):]
+    if not filename or "/" in filename or "\\" in filename or Path(filename).name != filename:
+        return None
+    upload_root = UPLOAD_DIR.resolve()
+    path = (UPLOAD_DIR / filename).resolve()
+    return path if path.parent == upload_root else None
 
 
 def _prediction_payload() -> tuple[float, float]:
@@ -113,6 +181,31 @@ def _prediction_result(current_age: float, horizon: float) -> dict:
         "extrapolacion": bool(current["extrapolacion"] or future["extrapolacion"]),
         "rango_historico": {"min": regression.min_age, "max": regression.max_age},
         "ecuacion": regression.equation,
+    }
+
+
+def _pathology_pci_estimate(segment_id: str, severity: str) -> dict:
+    segment_inspections = inspections.loc[inspections["tramo_id"] == segment_id]
+    if segment_inspections.empty:
+        abort(422, description="El tramo_id no existe en el dataset de inspecciones.")
+    if severity not in SEVERITY_PCI_ADJUSTMENT:
+        abort(422, description="Nivel de severidad no válido.")
+
+    latest_inspection = segment_inspections.sort_values("fecha").iloc[-1]
+    age = float(latest_inspection["antiguedad_anios"])
+    base_pci = regression.predict(age)["pci"]
+    estimated_pci = round(
+        float(np.clip(base_pci - SEVERITY_PCI_ADJUSTMENT[severity], 0, 100)),
+        1,
+    )
+    return {
+        "tramo_id": segment_id,
+        "antiguedad_anios": age,
+        "pci_base": base_pci,
+        "ajuste_severidad": -SEVERITY_PCI_ADJUSTMENT[severity],
+        "pci_estimado": estimated_pci,
+        "condicion": regression.classify(estimated_pci),
+        "nota": "Estimación referencial basada en antigüedad y severidad; no sustituye una evaluación técnica PCI.",
     }
 
 
@@ -191,6 +284,23 @@ def predict():
     return jsonify(_native(_prediction_result(current_age, horizon)))
 
 
+@app.post("/api/estimar-pci-patologia")
+def estimate_pathology_pci():
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        abort(400, description="Envía tramo_id y severidad como JSON.")
+    segment_id = payload.get("tramo_id")
+    severity = payload.get("severidad")
+    if not isinstance(segment_id, str) or not segment_id.strip():
+        abort(422, description="Indica un tramo válido.")
+    if not isinstance(severity, str):
+        abort(422, description="Nivel de severidad no válido.")
+    severity = severity.strip()
+    if severity not in SEVERITY_PCI_ADJUSTMENT:
+        abort(422, description="Nivel de severidad no válido.")
+    return jsonify(_native(_pathology_pci_estimate(segment_id.strip(), severity)))
+
+
 @app.get("/api/patologias")
 def list_pathologies():
     return jsonify(_native(_registry()))
@@ -199,8 +309,14 @@ def list_pathologies():
 @app.post("/api/patologias")
 def register_pathology():
     segment_id = request.form.get("tramo_id", "").strip()
-    pathology = request.form.get("patologia", "").strip()
-    severity = request.form.get("severidad", "").strip()
+    pathology = (
+        request.form.get("patologia", "").strip()
+        or request.form.get("patologia_sugerida", "").strip()
+    )
+    severity = (
+        request.form.get("severidad", "").strip()
+        or request.form.get("severidad_sugerida", "").strip()
+    )
     description = request.form.get("descripcion", "").strip()
     photo = request.files.get("foto")
 
@@ -208,8 +324,12 @@ def register_pathology():
         abort(422, description="Indica un tramo válido.")
     if segment_id not in known_segment_ids:
         abort(422, description="El tramo_id no existe en el dataset de inspecciones.")
+    if not pathology:
+        abort(422, description="Selecciona o confirma un tipo de patología.")
     if pathology not in PATOLOGIAS:
         abort(422, description="Tipo de patología no válido.")
+    if not severity:
+        abort(422, description="Selecciona o confirma el nivel de severidad.")
     if severity not in SEVERIDADES:
         abort(422, description="Nivel de severidad no válido.")
     if len(description) > 1000:
@@ -217,6 +337,7 @@ def register_pathology():
     if photo is None or not photo.filename:
         abort(422, description="Adjunta una fotografía de evidencia.")
 
+    pci_estimate = _pathology_pci_estimate(segment_id, severity)
     extension = ALLOWED_IMAGE_TYPES.get(photo.mimetype or "")
     if extension is None:
         abort(415, description="La fotografía debe ser JPG, PNG o WEBP.")
@@ -247,24 +368,55 @@ def register_pathology():
         "descripcion": description,
         "foto_url": f"/static/uploads/{filename}",
         "fecha": datetime.now(timezone.utc).isoformat(),
+        "pci_estimado": pci_estimate["pci_estimado"],
+        "condicion": pci_estimate["condicion"],
     }
     records.insert(0, record)
 
-    temporary_registry = REGISTRY_PATH.with_suffix(".tmp")
     try:
-        REGISTRY_PATH.parent.mkdir(parents=True, exist_ok=True)
-        temporary_registry.write_text(
-            json.dumps(records, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
-        temporary_registry.replace(REGISTRY_PATH)
-    except OSError:
+        _save_registry(records)
+    except HTTPException:
         if target.exists():
-            target.unlink()
-        if temporary_registry.exists():
-            temporary_registry.unlink()
-        abort(500, description="No se pudo guardar el registro de patologías.")
+            try:
+                target.unlink()
+            except OSError:
+                app.logger.exception("No se pudo limpiar la fotografía tras un fallo de registro")
+        raise
     return jsonify(record), 201
+
+
+@app.delete("/api/patologias/<registro_id>")
+def delete_pathology(registro_id: str):
+    records = _registry()
+    record_index = next(
+        (index for index, record in enumerate(records) if record.get("id") == registro_id),
+        None,
+    )
+    if record_index is None:
+        abort(404, description="No se encontró el registro de patología.")
+
+    record = records[record_index]
+    image_path = _image_path(record)
+    image_backup = None
+    if image_path is not None and image_path.is_file():
+        try:
+            image_backup = image_path.read_bytes()
+            image_path.unlink()
+        except OSError:
+            app.logger.exception("No se pudo eliminar la fotografía del registro %s", registro_id)
+            abort(500, description="No se pudo eliminar la fotografía del registro.")
+
+    updated_records = records[:record_index] + records[record_index + 1:]
+    try:
+        _save_registry(updated_records)
+    except HTTPException:
+        if image_backup is not None and image_path is not None:
+            try:
+                image_path.write_bytes(image_backup)
+            except OSError:
+                app.logger.exception("No se pudo restaurar la fotografía del registro %s", registro_id)
+        raise
+    return jsonify({"id": registro_id, "eliminado": True})
 
 
 @app.get("/api/exportar-csv")
